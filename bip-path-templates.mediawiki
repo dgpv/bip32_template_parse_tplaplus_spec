@@ -1,0 +1,162 @@
+<pre>
+  BIP: ?
+  Layer: Applications
+  Title: Templates for Hierarchical Deterministic derivation paths
+  Author: Dmitry Petukhov <dp@simplexum.com>
+  Status: Draft
+  Type: Informational
+  Created: 2020-06-23
+  License: BSD-2-Clause
+</pre>
+
+==Abstract==
+
+This document describes a format for the representation of the templates that specify
+the constraints that can be imposed on BIP32 derivation paths.
+
+The constraints specified by the templates allow to easily discern 'valid' paths,
+that match the constraints, and 'invalid' paths, that exceed the constraints.
+
+==Copyright==
+
+This BIP is licensed under the 2-clause BSD license.
+
+==Motivation==
+
+BIP32 derivation path format is universal, and a number of schemes for derivation were proposed
+in BIP43 and other documents, such as BIPs 44,45,49,84. The flexibility of the format allowed
+industry participants to implement custom derivation shemes that fit particular purposes,
+but not necessarily useful in general.
+
+Unrestricted derivation path usage might be unsafe in certain contexts. In particular, when "change"
+outputs of a transaction are sent to the addresses derived via paths unknown to the sender, the sender
+might loose access to the whole change amount.
+
+A simplistic approach of hard-coding the checks for well-known paths into software and firmware leads
+to reduced interoperability. Vendors cannot choose custom paths that are appropriate for
+their particular, non-general-purpose applications, and are forced to shoehorn their solutions
+into using well-known paths, or convince other vendors to support their custom paths. This approach
+scales poorly.
+
+A flexible approach proposed in this document is to define a standard notation for "BIP32 path templates"
+that succintly describes the constraints to impose on the derivation path.
+
+Wide support for these path templates will increase interoperability and flexibility of solutions,
+and will allow vendors and individual developers to easily define their own custom restrictions.
+This way, they will be able to deal with the risks of accidental or malicious use of unrestricted
+derivation paths in a more flexible and precise manner.
+
+Well-known path templates can be pre-configured by default on devices and applications,
+but users can have an option to turn off the templates that are not relevant to their uses.
+
+Having standardized format for custom path templates will enable a common approach to be developed
+to the enforcement of application-specific path restrictions in devices and applications.
+One example of such approach might be for devices to allow to install application-specific profiles
+with path templates and possibly other custom parameters. Care must be taken to prevent accidental
+installation of malicious or incorrect profile, though.
+
+==Specification==
+
+The format for the template was choosen to make it easy to read, convenient and visually unambigous. 
+
+Additional rules can make the format fully unambigous, for the price of slightly reduced convenience.
+
+Template starts with optional prefix "m/", and then one or more sections delimited by the slash character ("/").
+
+Implementations MAY limit the maximum number of sections.
+
+Each section consists of ''index template'', optionally followed by the hardened marker: either an apostrophe ("'") or letter "h".
+
+Index template can be:
+
+* An integer value from 0 to 2147483647 ("Unit index template")
+* The <nowiki>"["</nowiki> character, followed by a number of ''index ranges'' delimited by commas (","), followed by <nowiki>"]"</nowiki> character ("Ranged index template")
+
+Implementations MAY limit the maximum number of index ranges within the Ranged index template.
+
+Index range can be:
+
+* An integer value from 0 to 2147483647 ("Unit range")
+* An integer value from 0 to 2147483647, followed by the "-" character, followed by another integer value from 0 to 2147483647 ("Non-unit range")
+
+For Non-unit range, value on the left side of the "-" character is the range_start, and the value on the right side of the "-" character is the range_end.
+
+Constraints:
+
+# For the avoidance of ambiguity, whitespace is not allowed within the path template.
+# Commas within the Ranged index template are only allowed in between index ranges.
+# For the avoidance of ambiguity, an index range that matches a single value MUST be specified as Unit range.
+# For Non-unit range, range_end MUST be larger than range_start.
+# For the Unit range, we say that range_start is equal to range_end, even though there is no start/end in the Unit range.
+# If there are more than one index range within the Ranged index template, range_start of the second and any subsequent range MUST be larger than the range_end of the preceeding range.
+# For the avoidance of ambiguity, all representations of integer values larger than 0 must not start with character "0" (no leading zeroes allowed)
+# Hardened marker can appear after Unit index template or Ranged index template, and denotes that the preceding index template specifies hardened derivation.  Hardened derivation matching means that the values that specify the range will be increased by 2147483648 for the purposes of matching.
+# If hardened marker appears within any section in the path template, all preceding sections MUST also specify hardened matching.
+# For the avoidance of ambiguity, if hardened marker appears within any section in the path template, all preceding sections MUST also use the same hardened marker (either "h" or "'")
+# For the avoidance of ambiguity, trailing slashes (for example, "1/2/") and duplicate slashes (for example, "0//1") are not allowed
+
+It may be desireable to have fully unambiguous encoding, where for each valid path template string, there are no other valid template string that matches the exact same set of paths. This would enable to compare templates for equality by simple string equality check, without any parsing.
+
+To achieve full non-ambiguessness, in addition to the rules above, one extra rule is needed:
+
+* Within Ranged index template, subsequent range cannot start with the value that is equal to the end of the previous range plus one. Thus, <nowiki>"[1,2,3-5]"</nowiki> is not allowed, and should be specified as <nowiki>"[1-5]"</nowiki> instead. This rule might make templates less convenient for frequent edits, though.
+
+Also, only one type of hardened marker need to be allowed for full non-ambiguessness (either "h" or "'"). But instead of requiring this, implementations can replace one type of marker with another in the template strings before comparing them.
+
+===Full and partial templates===
+
+If the template starts with "m/", that means that this is the "full" template, that matches the whole path.
+
+If the template does not start with "m/", that means that this is a "partial" template, and it can be used to match a part of the path, in the contexts where this might be appropriate (For example, when constraints for the suffix of the path might be dynamic, while constraints for the prefix of the path are fixed).
+
+Full template can be combined with partial template, where partial template extends full template,
+resulting in new, longer full template.
+
+Partial template can be combined with another partial template, resulting in new, longer partial template.
+
+Full template can not be combined with another full template.
+
+Implementations MUST support parsing full templates and matching paths against full templates
+
+Implementations MAY support parsing partial templates and matching portions of the paths against partial templates, as well as combining the templates.
+
+===Parsing result===
+
+The result of successful parsing of a valid path template should be a list of sections, where each section is a list of index ranges, where index range is a tuple of (range_start, range_end).
+
+===Matching===
+
+The matching is to be performed against a list of integer values that represent a BIP32 path.
+Non-hardened indexes in this list should be represented by values from 0 to 2147483647.
+Hardened indexes in this list should be represented by values from 2147483648 to 4294967295.
+
+The matching algorithm:
+
+    1. If the length of the path differs from the length of the template, fail
+    2. For each value V at position N in the path:
+            If for each index range within the section at position N in the template,
+            value V is either less than range_start, or greater than range_end, fail.
+    3. Otherwise, succeed.
+
+==Formal specification==
+
+The finite state machine (FSM) for the parser of the described template format,
+and the matching formula are specified in TLA+ specification language at https://github.com/dgpv/bip32_template_parse_tplaplus_spec
+
+The specification can be used with TLC checker and accompanying script to generate test data for the implementations.
+
+==Implementations==
+
+While the formal specification specifies an FSM, which would be convenient for implementation without access to rich string handling facilities, when such facilities are available, the implementation might use the whole-string deconstruction approach where the template are first split into sections, then sections are split into index templates, and then each index template are parsed individually.
+
+FSM-based approach can be made close to the formal specification, though, and the test data generated with TLC checker would give much better coverage for FSM based implementation. If the template string contains several errors, an implementation that uses deconstruction apporach might detect some errors earlier than FSM-based implementation, and vise versa.
+
+At the moment, one non-FSM implementation exist: BIP32PathTemplate class in bitcointx.core.key module of python-bitcointx library (https://github.com/Simplexum/python-bitcointx)
+
+==Examples==
+
+"m/[44,49,84]'/0'/0'/[0-1]/[0-50000]" specifies a full template that matches both external and internal chains of BIP44, BIP49 and BIP84 paths, with a constraint that the address index cannot be larger than 50000
+
+"[0-2,33,123]/*" specifies a partial template that match non-hardened values 0, 1, 2, 33, 123 as first index, and any non-hardened value at second index
+
+"*h/0" specifies a partial template that matches any hardened index followed by any non-hardened index

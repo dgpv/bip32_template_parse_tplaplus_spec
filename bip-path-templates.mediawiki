@@ -87,21 +87,21 @@ For Unit range, we say that range_start is equal to range_end, even though there
 
 Constraints:
 
-# For the avoidance of ambiguity, whitespace is not allowed within the path template.
-# Commas within the Ranged index template are only allowed in between index ranges.
+# For the avoidance of ambiguity, whitespace MUST NOT appear within the path template.
+# Commas within the Ranged index template MUST only appear in between index ranges.
 # For the avoidance of ambiguity, an index range that matches a single value MUST be specified as Unit range.
 # For Non-unit range, range_end MUST be larger than range_start.
 # If there are more than one index range within the Ranged index template, range_start of the second and any subsequent range MUST be larger than the range_end of the preceeding range.
-# For the avoidance of ambiguity, all representations of integer values larger than 0 must not start with character "0" (no leading zeroes allowed)
+# For the avoidance of ambiguity, all representations of integer values larger than 0 MUST NOT start with character "0" (no leading zeroes allowed)
 # If hardened marker appears within any section in the path template, all preceding sections MUST also specify hardened matching.
 # For the avoidance of ambiguity, if hardened marker appears within any section in the path template, all preceding sections MUST also use the same hardened marker (either "h" or "'")
-# For the avoidance of ambiguity, trailing slashes (for example, "1/2/") and duplicate slashes (for example, "0//1") are not allowed
+# For the avoidance of ambiguity, trailing slashes (for example, "1/2/") and duplicate slashes (for example, "0//1") MUST NOT appear in the template
 
 It may be desireable to have fully unambiguous encoding, where for each valid path template string, there are no other valid template string that matches the exact same set of paths. This would enable to compare templates for equality by simple string equality check, without any parsing.
 
 To achieve full non-ambiguessness, in addition to the rules above, one extra rule is needed:
 
-* Within Ranged index template, subsequent range cannot start with the value that is equal to the end of the previous range plus one. Thus, <nowiki>"[1,2,3-5]"</nowiki> is not allowed, and should be specified as <nowiki>"[1-5]"</nowiki> instead. This rule might make templates less convenient for frequent edits, though.
+* Within Ranged index template, subsequent range MUST NOT start with the value that is equal to the end of the previous range plus one. Thus, <nowiki>"[1,2,3-5]"</nowiki> is not allowed, and should be specified as <nowiki>"[1-5]"</nowiki> instead. This rule might make templates less convenient for frequent edits, though.
 
 Also, only one type of hardened marker need to be allowed for full non-ambiguessness (either "h" or "'"). But instead of requiring this, implementations can replace one type of marker with another in the template strings before comparing them.
 

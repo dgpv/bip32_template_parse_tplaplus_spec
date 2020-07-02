@@ -152,7 +152,7 @@ The specification can be used with TLC checker and accompanying script to genera
 
 While the formal specification specifies an FSM, which would be convenient for implementation without access to rich string handling facilities, when such facilities are available, the implementation might use the whole-string deconstruction approach where the template are first split into sections, then sections are split into index templates, and then each index template are parsed individually.
 
-FSM-based approach can be made close to the formal specification, though, and the test data generated with TLC checker would give much better coverage for FSM based implementation. If the template string contains several errors, an implementation that uses deconstruction apporach might detect some errors earlier than FSM-based implementation, and vise versa.
+FSM-based approach can be made close to the formal specification, though, and the test data generated with TLC checker would give much better coverage for FSM based implementation. If the template string contains several errors, an implementation that uses deconstruction apporach might detect some of these errors earlier than FSM-based implementation, and vise versa.
 
 At the moment, one non-FSM implementation exist: BIP32PathTemplate class in bitcointx.core.key module of python-bitcointx library (https://github.com/Simplexum/python-bitcointx)
 

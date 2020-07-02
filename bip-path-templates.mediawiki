@@ -127,8 +127,10 @@ The result of successful parsing of a valid path template should be a list of se
 
 ===Matching===
 
-The matching is to be performed against a list of integer values that represent a BIP32 path.
+The matching is to be performed against a list of integer values that represent a BIP32 path (or a portion of BIP32 path, for partial templates).
+
 Non-hardened indexes in this list should be represented by values from 0 to 2147483647.
+
 Hardened indexes in this list should be represented by values from 2147483648 to 4294967295.
 
 The matching algorithm:

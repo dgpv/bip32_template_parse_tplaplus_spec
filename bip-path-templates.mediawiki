@@ -74,6 +74,8 @@ Index template can be:
 
 Implementations MAY limit the maximum number of index ranges within the Ranged index template.
 
+If an index template is immediately followed by hardened marker, this means that all values specified in this index template is to be increased by 2147483648 for the purposes of matching.
+
 Index range can be:
 
 * An integer value from 0 to 2147483647 ("Unit range")
@@ -91,7 +93,6 @@ Constraints:
 # For Non-unit range, range_end MUST be larger than range_start.
 # If there are more than one index range within the Ranged index template, range_start of the second and any subsequent range MUST be larger than the range_end of the preceeding range.
 # For the avoidance of ambiguity, all representations of integer values larger than 0 must not start with character "0" (no leading zeroes allowed)
-# Hardened marker can appear after Unit index template or Ranged index template, and denotes that the preceding index template specifies hardened derivation.  Hardened derivation matching means that the values that specify the range will be increased by 2147483648 for the purposes of matching.
 # If hardened marker appears within any section in the path template, all preceding sections MUST also specify hardened matching.
 # For the avoidance of ambiguity, if hardened marker appears within any section in the path template, all preceding sections MUST also use the same hardened marker (either "h" or "'")
 # For the avoidance of ambiguity, trailing slashes (for example, "1/2/") and duplicate slashes (for example, "0//1") are not allowed

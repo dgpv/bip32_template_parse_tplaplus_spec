@@ -155,8 +155,21 @@ At the moment, one non-FSM implementation exist: BIP32PathTemplate class in bitc
 
 ==Examples==
 
-"m/[44,49,84]'/0'/0'/[0-1]/[0-50000]" specifies a full template that matches both external and internal chains of BIP44, BIP49 and BIP84 paths, with a constraint that the address index cannot be larger than 50000
+'''"m/[44,49,84]'/0'/0'/[0-1]/[0-50000]"''' specifies a full template that matches both external and internal chains of BIP44, BIP49 and BIP84 paths, with a constraint that the address index cannot be larger than 50000
 
-"[0-2,33,123]/*" specifies a partial template that match non-hardened values 0, 1, 2, 33, 123 as first index, and any non-hardened value at second index
+Its representation after parsing can be (using Python syntax, ignoring full/partial distinction):
+    [[(2147483692, 2147483692), (2147483697, 2147483697), (2147483732, 2147483732)),
+     [(2147483648, 2147483648)],
+     [(2147483648, 2147483648)],
+     [(0, 1)],
+     [(0, 50000)]]
 
-"*h/0" specifies a partial template that matches any hardened index followed by any non-hardened index
+'''"[0-2,33,123]/*"''' specifies a partial template that match non-hardened values 0, 1, 2, 33, 123 as first index, and any non-hardened value at second index
+
+Its representation after parsing can be:
+    [[(0, 2), (33, 33), (123, 123)], [(0, 2147483647)]]
+
+'''"*h/0"''' specifies a partial template that matches any hardened index followed by any non-hardened index
+
+Its representation after parsing can be:
+    [[(2147483648, 4294967295)], [(0, 0)]]

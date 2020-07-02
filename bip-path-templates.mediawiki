@@ -81,13 +81,14 @@ Index range can be:
 
 For Non-unit range, value on the left side of the "-" character is the range_start, and the value on the right side of the "-" character is the range_end.
 
+For Unit range, we say that range_start is equal to range_end, even though there is no start/end in the Unit range.
+
 Constraints:
 
 # For the avoidance of ambiguity, whitespace is not allowed within the path template.
 # Commas within the Ranged index template are only allowed in between index ranges.
 # For the avoidance of ambiguity, an index range that matches a single value MUST be specified as Unit range.
 # For Non-unit range, range_end MUST be larger than range_start.
-# For the Unit range, we say that range_start is equal to range_end, even though there is no start/end in the Unit range.
 # If there are more than one index range within the Ranged index template, range_start of the second and any subsequent range MUST be larger than the range_end of the preceeding range.
 # For the avoidance of ambiguity, all representations of integer values larger than 0 must not start with character "0" (no leading zeroes allowed)
 # Hardened marker can appear after Unit index template or Ranged index template, and denotes that the preceding index template specifies hardened derivation.  Hardened derivation matching means that the values that specify the range will be increased by 2147483648 for the purposes of matching.

@@ -138,8 +138,8 @@ The matching algorithm:
     1. If the length of the path differs from the length of the template, fail
     2. For each value V at position N in the path:
             If for each index range within the section at position N in the template,
-            value V is either less than range_start, or greater than range_end, fail.
-    3. Otherwise, succeed.
+            value V is either less than range_start, or greater than range_end, fail
+    3. Otherwise, succeed
 
 ==Formal specification==
 

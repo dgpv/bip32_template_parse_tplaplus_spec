@@ -105,7 +105,7 @@ To achieve full non-ambiguessness, in addition to the rules above, one extra rul
 
 Also, only one type of hardened marker need to be allowed for full non-ambiguessness (either "h" or "'"). But instead of requiring this, implementations can replace one type of marker with another in the template strings before comparing them.
 
-===Full and partial templates===
+==Full and partial templates==
 
 If the template starts with "m/", that means that this is the "full" template, that matches the whole path.
 
@@ -122,11 +122,11 @@ Implementations MUST support parsing full templates and matching paths against f
 
 Implementations MAY support parsing partial templates and matching portions of the paths against partial templates, as well as combining the templates.
 
-===Parsing result===
+==Parsing result==
 
 The result of successful parsing of a valid path template should be a list of sections, where each section is a list of index ranges, where index range is a tuple of (range_start, range_end).
 
-===Matching===
+==Matching==
 
 The matching is to be performed against a list of integer values that represent a BIP32 path (or a portion of BIP32 path, for partial templates).
 

@@ -154,12 +154,13 @@ ValidChars == { "/", "[", "]", "-", ",", "*" }
 
 ASSUME NULL_CHAR \notin ValidChars
 
-\* Whitespace is not allowed, but having separate error for
+\* Space is not allowed, but having separate error for
 \* 'unexpected space' rather than generic 'invalid char'
 \* is beneficial, helps to avoid confusion
-SPACE_CHAR == " "
+SpaceChars == { " " }
 
-AllChars == ValidChars \union EXTRA_CHARS \union { NULL_CHAR, SPACE_CHAR }
+AllChars == ValidChars \union EXTRA_CHARS \union { NULL_CHAR }
+            \union SpaceChars
 
 \* _raw here means 'without the UNCHANGED expression'
 StateTransition_raw(state) ==
@@ -269,7 +270,7 @@ IsSectionHardened(section) ==
 
 UnexpectedCharState ==
     CASE c = NULL_CHAR    -> StateErrorUnexpectedFinish
-      [] c = SPACE_CHAR   -> StateErrorUnexpectedSpace
+      [] c \in SpaceChars -> StateErrorUnexpectedSpace
       [] c \in ValidChars -> StateErrorUnexpectedChar
       [] OTHER            -> StateErrorInvalidChar
 
@@ -390,7 +391,7 @@ ParserFSM ==
          -> CASE c = NULL_CHAR
                  -> StateTransition(StateErrorUnexpectedFinish)
               [] index_value = INVALID_INDEX
-                 -> /\ fsm_state' = IF c = SPACE_CHAR
+                 -> /\ fsm_state' = IF c \in SpaceChars
                                     THEN StateErrorUnexpectedSpace
                                     ELSE StateErrorDigitExpected
                        \* The following two equality expressions

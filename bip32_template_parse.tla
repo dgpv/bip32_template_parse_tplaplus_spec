@@ -181,7 +181,7 @@ StateTransitionWithReturn(state, return_state) ==
     StateTransitionWithReturn_raw(state, return_state)
     /\ UNCHANGED unchanged_OnStateTransitionWithReturn
 
-ParseDigit ==
+ProcessDigit ==
     LET v == ( CHOOSE n \in DOMAIN DigitsTuple: DigitsTuple[n] = c ) - 1
      IN CASE index_value = 0
              -> [ ok |-> FALSE, error_state |-> StateErrorIndexHasLeadingZero ]
@@ -358,12 +358,12 @@ ParserFSM ==
                     /\ UNCHANGED <<template, accepted_hardened_markers,
                                    fsm_return_state>>
               [] c \in Digits /\ Len(template) = MAX_SECTIONS
-                 -> LET res == ParseDigit
+                 -> LET res == ProcessDigit
                      IN IF res.ok
                         THEN StateTransition(StateErrorPathTooLong)
                         ELSE StateTransition(res.error_state)
               [] c \in Digits
-                 -> LET res == ParseDigit
+                 -> LET res == ProcessDigit
                     IN IF res.ok
                        THEN /\ index_value' = res.value
                             /\ StateTransitionWithReturn_raw(StateParseValue,
@@ -460,7 +460,7 @@ ParserFSM ==
 
       [] fsm_state = StateParseValue
          -> /\ Assert( c \in Digits, "this check is in top-level logic" )
-            /\ LET res == ParseDigit
+            /\ LET res == ProcessDigit
                 IN IF res.ok
                    THEN /\ index_value' = res.value
                         /\ UNCHANGED <<template, accepted_hardened_markers,

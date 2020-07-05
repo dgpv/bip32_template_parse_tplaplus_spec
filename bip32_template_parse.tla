@@ -267,6 +267,10 @@ IsSectionHardened(section) ==
                  /\ section[m][1] >= HARDENED_INDEX_START
                  /\ section[m][2] >= HARDENED_INDEX_START,
                "hardened/unhardened cannot be mixed within one range" )
+    /\ Assert( \A m \in DOMAIN section:
+                 /\ section[m][1] <= MAX_INDEX_VALUE + HARDENED_INDEX_START
+                 /\ section[m][2] <= MAX_INDEX_VALUE + HARDENED_INDEX_START,
+               "range values cannot exceed MAX_INDEX_VALUE+HARDENED_INDEX_START" )
 
 UnexpectedCharState ==
     CASE c = NULL_CHAR    -> StateErrorUnexpectedFinish

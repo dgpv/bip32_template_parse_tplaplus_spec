@@ -155,7 +155,10 @@ While the formal specification specifies an FSM, which would be convenient for i
 
 FSM-based approach can be made close to the formal specification, though, and the test data generated with TLC checker would give much better coverage for FSM based implementation. If the template string contains several errors, an implementation that uses deconstruction apporach might detect some of these errors earlier than FSM-based implementation, and vise versa.
 
-At the moment, one non-FSM implementation exist: BIP32PathTemplate class in bitcointx.core.key module of python-bitcointx library (https://github.com/Simplexum/python-bitcointx)
+At the moment, two implementations exist:
+
+* non-FSM implementation in python: BIP32PathTemplate class in bitcointx.core.key module of python-bitcointx library (https://github.com/Simplexum/python-bitcointx)
+* FSM implementation in C: https://github.com/dgpv/bip32_template_c_implementation
 
 ==Examples==
 

@@ -134,7 +134,7 @@ Implementations MAY support parsing partial templates and matching portions of t
 
 ==Parsing result==
 
-The result of successful parsing of a valid path template should be a list of sections, where each section is a list of index ranges, where index range is a tuple of (range_start, range_end).
+The result of successful parsing of a valid path template can be represented by a list of sections, where each section is a list of index ranges, where index range is a tuple of (range_start, range_end).
 
 ==Matching==
 

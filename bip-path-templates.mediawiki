@@ -24,9 +24,21 @@ This BIP is licensed under the 2-clause BSD license.
 ==Motivation==
 
 BIP32 derivation path format is universal, and a number of schemes for derivation were proposed
-in BIP43 and other documents, such as BIPs 44,45,49,84. The flexibility of the format allowed
+in BIP43 and other documents, such as BIPs 44,45,49,84. The flexibility of the format also allowed
 industry participants to implement custom derivation shemes that fit particular purposes,
 but not necessarily useful in general.
+
+Even when existing BIPs for derivation schemes are used, their usage is not uniform across
+the different wallets, in part because software vendors might have different considerations
+and priorities when making decisions about derivation paths. This creates friction for users,
+which might face problems when they try to access their coins using the wallet that derives
+addresses differently than the one they used before. The problem is common enough to warrant
+the creation of [https://walletsrecovery.org/ dedicated website] that tracks paths used
+by different wallets.
+
+Wallet software authors can use the proposed format to describe the derivation paths that
+their software uses. This can improve user experience when switching to different wallet
+software, restoring access to old wallets, etc.
 
 Unrestricted derivation path usage might be unsafe in certain contexts. In particular, when "change"
 outputs of a transaction are sent to the addresses derived via paths unknown to the sender, the sender

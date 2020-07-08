@@ -71,8 +71,6 @@ installation of malicious or incorrect profile, though.
 
 The format for the template was choosen to make it easy to read, convenient and visually unambigous. 
 
-Additional rules can make the format fully unambigous, for the price of slightly reduced convenience.
-
 Template starts with optional prefix "m/", and then one or more sections delimited by the slash character ("/").
 
 Implementations MAY limit the maximum number of sections.

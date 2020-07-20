@@ -33,7 +33,7 @@ the different wallets, in part because software vendors might have different con
 and priorities when making decisions about derivation paths. This creates friction for users,
 which might face problems when they try to access their coins using the wallet that derives
 addresses differently than the one they used before. The problem is common enough to warrant
-the creation of [https://walletsrecovery.org/ dedicated website] that tracks paths used
+the creation of a [https://walletsrecovery.org/ dedicated website] that tracks paths used
 by different wallets.
 
 Wallet software authors can use the proposed format to describe the derivation paths that
@@ -42,7 +42,7 @@ software, restoring access to old wallets, etc.
 
 Unrestricted derivation path usage might be unsafe in certain contexts. In particular, when "change"
 outputs of a transaction are sent to the addresses derived via paths unknown to the sender, the sender
-might loose access to the whole change amount.
+might lose access to the whole change amount.
 
 A simplistic approach of hard-coding the checks for well-known paths into software and firmware leads
 to reduced interoperability. Vendors cannot choose custom paths that are appropriate for
@@ -61,11 +61,11 @@ derivation paths in a more flexible and precise manner.
 Well-known path templates can be pre-configured by default on devices and applications,
 but users can have an option to turn off the templates that are not relevant to their uses.
 
-Having standardized format for custom path templates will enable a common approach to be developed
-to the enforcement of application-specific path restrictions in devices and applications.
-One example of such approach might be for devices to allow to install application-specific profiles
-with path templates and possibly other custom parameters. Care must be taken to prevent accidental
-installation of malicious or incorrect profile, though.
+Having a standardized format for custom path templates will enable a common approach to be developed
+in the enforcement of application-specific path restrictions in devices and applications.
+One example of such an approach might be for devices to allow application-specific profiles
+with path templates and possibly other custom parameters. Care must be taken to prevent the accidental
+installation of malicious or incorrect profiles, though.
 
 ==Specification==
 
@@ -97,29 +97,29 @@ For Unit range, we say that range_start is equal to range_end, even though there
 
 Constraints:
 
-# For the avoidance of ambiguity, whitespace MUST NOT appear within the path template.
+# To avoid ambiguity, whitespace MUST NOT appear within the path template.
 # Commas within the Ranged index template MUST only appear in between index ranges.
-# For the avoidance of ambiguity, an index range that matches a single value MUST be specified as Unit range.
+# To avoid ambiguity, an index range that matches a single value MUST be specified as Unit range.
 # For Non-unit range, range_end MUST be larger than range_start.
-# If there are more than one index range within the Ranged index template, range_start of the second and any subsequent range MUST be larger than the range_end of the preceeding range.
-# For the avoidance of ambiguity, all representations of integer values larger than 0 MUST NOT start with character "0" (no leading zeroes allowed)
+# If there is more than one index range within the Ranged index template, range_start of the second and any subsequent range MUST be larger than the range_end of the preceeding range.
+# To avoid ambiguity, all representations of integer values larger than 0 MUST NOT start with character "0" (no leading zeroes allowed).
 # If hardened marker appears within any section in the path template, all preceding sections MUST also specify hardened matching.
-# For the avoidance of ambiguity, if hardened marker appears within any section in the path template, all preceding sections MUST also use the same hardened marker (either "h" or "'")
-# For the avoidance of ambiguity, trailing slashes (for example, "1/2/") and duplicate slashes (for example, "0//1") MUST NOT appear in the template
+# To avoid ambiguity, if a hardened marker appears within any section in the path template, all preceding sections MUST also use the same hardened marker (either "h" or "'").
+# To avoid ambiguity, trailing slashes (for example, "1/2/") and duplicate slashes (for example, "0//1") MUST NOT appear in the template.
 
-It may be desireable to have fully unambiguous encoding, where for each valid path template string, there are no other valid template string that matches the exact same set of paths. This would enable to compare templates for equality by simple string equality check, without any parsing.
+It may be desireable to have fully unambiguous encoding, where for each valid path template string, there is no other valid template string that matches the exact same set of paths. This would enable someone to compare templates for equality through a simple string equality check, without any parsing.
 
-To achieve full non-ambiguoussness, in addition to the rules above, one extra rule is needed:
+In addition to the rules above, one extra rule is needed:
 
 * Within Ranged index template, subsequent range MUST NOT start with the value that is equal to the end of the previous range plus one. Thus, <nowiki>"[1,2,3-5]"</nowiki> is not allowed, and should be specified as <nowiki>"[1-5]"</nowiki> instead. This rule might make templates less convenient for frequent edits, though.
 
-Also, only one type of hardened marker need to be allowed for full non-ambiguoussness (either "h" or "'"). But instead of requiring this, implementations can replace one type of marker with another in the template strings before comparing them.
+Also, only one type of hardened marker should be allowed (either "h" or "'"). But instead of requiring this, implementations can replace one type of marker with another in the template strings before comparing them.
 
 ==Full and partial templates==
 
 If the template starts with "m/", that means that this is the "full" template, that matches the whole path.
 
-If the template does not start with "m/", that means that this is a "partial" template, and it can be used to match a part of the path, in the contexts where this might be appropriate (For example, when constraints for the suffix of the path might be dynamic, while constraints for the prefix of the path are fixed).
+If the template does not start with "m/", that means that this is a "partial" template, and it can be used to match a part of the path, in the contexts where this might be appropriate (for example, when constraints for the suffix of the path might be dynamic, while constraints for the prefix of the path are fixed).
 
 Full template can be combined with partial template, where partial template extends full template,
 resulting in new, longer full template.
@@ -128,7 +128,7 @@ Partial template can be combined with another partial template, resulting in new
 
 Full template can not be combined with another full template.
 
-Implementations MUST support parsing full templates and matching paths against full templates
+Implementations MUST support parsing full templates and matching paths against full templates.
 
 Implementations MAY support parsing partial templates and matching portions of the paths against partial templates, as well as combining the templates.
 
@@ -161,9 +161,9 @@ The specification can be used with TLC checker and accompanying script to genera
 
 ==Implementations==
 
-While the formal specification specifies an FSM, which would be convenient for implementation without access to rich string handling facilities, when such facilities are available, the implementation might use the whole-string deconstruction approach where the template are first split into sections, then sections are split into index templates, and then each index template are parsed individually.
+While the formal specification specifies an FSM, which would be convenient for implementation without access to rich string handling facilities, when such facilities are available, the implementation might use the whole-string deconstruction approach where the templates are first split into sections, then sections are split into index templates, and then each index template are parsed individually.
 
-FSM-based approach can be made close to the formal specification, though, and the test data generated with TLC checker would give much better coverage for FSM based implementation. If the template string contains several errors, an implementation that uses deconstruction apporach might detect some of these errors earlier than FSM-based implementation, and vise versa.
+A FSM-based approach can be made close to the formal specification, though, and the test data generated with TLC checker would give much better coverage for a FSM based implementation. If the template string contains several errors, an implementation that uses deconstruction apporach might detect some of these errors earlier than FSM-based implementation, and vise versa.
 
 At the moment, two implementations exist:
 

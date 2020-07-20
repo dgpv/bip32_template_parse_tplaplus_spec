@@ -109,11 +109,13 @@ Constraints:
 
 It may be desireable to have fully unambiguous encoding, where for each valid path template string, there is no other valid template string that matches the exact same set of paths. This would enable someone to compare templates for equality through a simple string equality check, without any parsing.
 
-In addition to the rules above, one extra rule is needed:
+To achieve this, two extra rules are needed:
 
 * Within Ranged index template, subsequent range MUST NOT start with the value that is equal to the end of the previous range plus one. Thus, <nowiki>"[1,2,3-5]"</nowiki> is not allowed, and should be specified as <nowiki>"[1-5]"</nowiki> instead. This rule might make templates less convenient for frequent edits, though.
 
-Also, only one type of hardened marker should be allowed (either "h" or "'"). But instead of requiring this, implementations can replace one type of marker with another in the template strings before comparing them.
+* Only one type of hardened marker should be allowed (either "h" or "'").
+
+Instead of requiring the second extra rule, implementations can simply replace one type of marker with another in the template strings before comparing them.
 
 ==Full and partial templates==
 

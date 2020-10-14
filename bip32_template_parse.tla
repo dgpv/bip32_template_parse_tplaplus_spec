@@ -302,7 +302,7 @@ CheckRangeCorrectness(where) ==
              -> [ ok |-> FALSE, error_state |-> StateErrorRangeStartNextToPrevious ]
           [] IsRangeEqualsWildcard
              -> [ ok |-> FALSE, error_state |-> StateErrorRangeEqualsWildcard ]
-          [] IsPathSectionRangeOpen /\ IsStartLargerThanEnd
+          [] IsStartLargerThanEnd
              -> [ ok |-> FALSE, error_state |-> StateErrorRangeOrderBad ]
           [] IsStartBeforePrevious
              -> [ ok |-> FALSE, error_state |-> StateErrorRangeOrderBad ]

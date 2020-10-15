@@ -30,7 +30,7 @@ ASSUME \A s \in INDEX_VALUE_STRINGS_OTHER_SECTIONS: Len(s) > 0
 
 VARIABLES c, template, fsm_state, fsm_return_state, index_value,
           accepted_hardened_markers, path_section, input_string,
-          input_value_string, input_value_pos
+          input_value_string, input_value_pos, is_partial
 
 \* Note: the following two variables only needed for the
 \* 'allow one error' mode, where when we encounter one of
@@ -45,7 +45,7 @@ VARIABLES saved_state, skipped_error_state
 
 fullState == <<c, template, fsm_state, fsm_return_state, index_value,
                accepted_hardened_markers, path_section, input_string,
-               saved_state, skipped_error_state,
+               saved_state, skipped_error_state, is_partial,
                input_value_string, input_value_pos>>
 
 unchanged_OnStateTransition ==
@@ -148,7 +148,7 @@ HardenedMarkers == IF TEMPLATE_FORMAT_UNAMBIGOUS
                    THEN { "h" }
                    ELSE { "'", "h" }
 
-ValidChars == { "/", "[", "]", "-", ",", "*" }
+ValidChars == { "m", "/", "[", "]", "-", ",", "*" }
               \union HardenedMarkers
               \union Digits
 
@@ -342,6 +342,24 @@ GetCharAtStart ==
     \/ /\ input_value_string \in INDEX_VALUE_STRINGS_FIRST_SECTION
        /\ input_value_pos = 2
        /\ c = input_value_string[1]
+
+
+InPrefixStart == c = "m" /\ Len(input_string) = 0
+
+InPrefixExpectSlash == ~is_partial /\ Len(input_string) = 1
+
+InPrefix == InPrefixStart \/ InPrefixExpectSlash
+
+PrefixParserFSM ==
+    CASE InPrefixStart
+         -> /\ is_partial' = FALSE
+            /\ UNCHANGED <<fsm_state, saved_state, unchanged_OnStateTransition>>
+      [] InPrefixExpectSlash
+         -> IF c = "/"
+            THEN UNCHANGED <<is_partial, fsm_state, saved_state,
+                             unchanged_OnStateTransition>>
+            ELSE /\ StateTransition(UnexpectedCharState)
+                 /\ UNCHANGED is_partial
 
 
 ParserFSM ==
@@ -557,6 +575,7 @@ Init ==
     /\ index_value = INVALID_INDEX
     /\ path_section = <<>>
     /\ input_string = ""
+    /\ is_partial = TRUE
     /\ accepted_hardened_markers = HardenedMarkers
     /\ saved_state = StateInvalid
     /\ skipped_error_state = <<StateInvalid, 0>>
@@ -575,8 +594,10 @@ Next ==
               /\ saved_state' = StateInvalid
               /\ UNCHANGED <<template, accepted_hardened_markers, path_section,
                              c, input_string, skipped_error_state, index_value,
-                             input_value_string, input_value_pos>>
-         ELSE /\ ParserFSM
+                             input_value_string, input_value_pos, is_partial>>
+         ELSE /\ IF InPrefix
+                 THEN PrefixParserFSM
+                 ELSE ParserFSM /\ UNCHANGED is_partial
               /\ IF c /= NULL_CHAR
                  THEN /\ GetChar
                       /\ input_string' = Append(input_string, c)
@@ -591,7 +612,7 @@ NextWithDeferredErrors ==
          /\ fsm_state' = saved_state
          /\ saved_state' = StateInvalid
          /\ UNCHANGED <<unchanged_OnStateTransition, c, input_string,
-                        input_value_string, input_value_pos>>
+                        input_value_string, input_value_pos, is_partial>>
     ELSE Next
 
 Spec == Init /\ [][Next]_fullState

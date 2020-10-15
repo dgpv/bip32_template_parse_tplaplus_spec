@@ -34,12 +34,12 @@ EncodingIsUnambiguous ==
               valid_tuples == TLCGet(slot_valid_template_tuples)
            IN input_string \notin valid_strings
               => /\ Assert(
-                      template \notin valid_tuples, 
+                      <<is_partial, template>> \notin valid_tuples,
                       <<"templates must be unique if the encoding is unambiguous",
                          input_string, template, valid_tuples>> )
                  /\ TLCSet(slot_valid_template_strings, valid_strings
                                                         \union { input_string })
                  /\ TLCSet(slot_valid_template_tuples, valid_tuples
-                                                       \union { template })
+                                                       \union { <<is_partial, template>> })
 
 =============================================================================

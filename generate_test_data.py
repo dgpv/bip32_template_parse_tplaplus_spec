@@ -116,6 +116,19 @@ if __name__ == "__main__":
 
             if state in ignored_error_states:
                 continue
+        elif state == "error_path_section_too_long":
+            if tpl_str.startswith('m/'):
+                relevant_str = tpl_str[2:]
+            else:
+                relevant_str = tpl_str
+
+            if '/' in relevant_str:
+                # Only first section is expected to have max ranges allowed,
+                # see const_MAX_RANGES_IN_FIRST_SECTION in MC.tla
+                # For the subsequent sections, the "path section too long"
+                # error will happen earlier than in normal implementation,
+                # and therefore irrelevant for test data
+                continue
 
         def collect_similar_errors_onechar(errstr: str) -> None:
             noerr_tpl_str = (tpl_str[:skipped_err[1]-1]

@@ -403,7 +403,7 @@ ParserFSM ==
       [] fsm_state = StateNextSection
          -> CASE c = "/"
                  -> StateTransition(StateSectionStart)
-              [] c = NULL_CHAR /\ Len(template) = MAX_SECTIONS
+              [] c = NULL_CHAR /\ Len(template) > MAX_SECTIONS
                  -> StateTransition(StateErrorPathTooLong)
               [] c = NULL_CHAR
                  -> StateTransition(StateNormalFinish)

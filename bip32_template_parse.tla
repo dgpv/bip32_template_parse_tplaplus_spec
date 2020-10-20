@@ -298,8 +298,6 @@ CheckRangeCorrectness(where) ==
              -> [ ok |-> FALSE, error_state |-> StateErrorSingleIndexAsRange ]
           [] IsPathSectionRangeOpen /\ IsStartEqualsEnd
              -> [ ok |-> FALSE, error_state |-> StateErrorRangeStartEqualsEnd ]
-          [] TEMPLATE_FORMAT_UNAMBIGOUS /\ IsStartNextToPrevious
-             -> [ ok |-> FALSE, error_state |-> StateErrorRangeStartNextToPrevious ]
           [] IsRangeEqualsWildcard
              -> [ ok |-> FALSE, error_state |-> StateErrorRangeEqualsWildcard ]
           [] IsStartLargerThanEnd
@@ -308,6 +306,8 @@ CheckRangeCorrectness(where) ==
              -> [ ok |-> FALSE, error_state |-> StateErrorRangeOrderBad ]
           [] IsStartInPrevious
              -> [ ok |-> FALSE, error_state |-> StateErrorRangesIntersect ]
+          [] TEMPLATE_FORMAT_UNAMBIGOUS /\ IsStartNextToPrevious
+             -> [ ok |-> FALSE, error_state |-> StateErrorRangeStartNextToPrevious ]
           [] OTHER
              -> [ ok |-> TRUE ]
 

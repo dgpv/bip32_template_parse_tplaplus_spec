@@ -169,8 +169,9 @@ A FSM-based approach can be made close to the formal specification, though, and 
 
 At the moment, two implementations exist:
 
-* non-FSM implementation in python: BIP32PathTemplate class in bitcointx.core.key module of python-bitcointx library (https://github.com/Simplexum/python-bitcointx)
 * FSM implementation in C: https://github.com/dgpv/bip32_template_c_implementation
+* FSM implementation in Python (micropython compatible): https://github.com/dgpv/bip32_template_python_implementation
+* non-FSM implementation in python: BIP32PathTemplate class in bitcointx.core.key module of python-bitcointx library (https://github.com/Simplexum/python-bitcointx)
 
 ==Examples==
 

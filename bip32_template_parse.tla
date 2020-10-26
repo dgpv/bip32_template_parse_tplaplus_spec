@@ -399,9 +399,7 @@ ParserFSM ==
          -> CASE c = "/"
                  -> StateTransition(StateSectionStart)
               [] c = NULL_CHAR
-                 -> /\ Assert(Len(template) <= MAX_SECTIONS,
-                              "This is checked in SECTION_START or SECTION_END")
-                    /\ StateTransition(StateNormalFinish)
+                 -> StateTransition(StateNormalFinish)
               [] OTHER -> StateTransition(UnexpectedCharState)
 
       [] fsm_state = StateRangeWithinSection
@@ -450,8 +448,6 @@ ParserFSM ==
          -> CASE index_value = INVALID_INDEX
                  -> Assert( index_value /= INVALID_INDEX,
                     "valid index expected" )
-              [] c = NULL_CHAR /\ Len(template) = MAX_SECTIONS
-                 -> StateTransition(StateErrorPathTooLong)
               [] c \in { "/", NULL_CHAR }
                  -> /\ CollectSection(NormalizedPathSection)
                     /\ index_value' = INVALID_INDEX
@@ -526,6 +522,9 @@ PathAndSectionLengthsAreWithinBounds ==
                           THEN MAX_RANGES_IN_FIRST_SECTION
                           ELSE MAX_RANGES_IN_OTHER_SECTIONS
          IN Len(template[n]) <= max_ranges
+
+OnPathTooLongMaxSectionsReached ==
+    fsm_state = StateErrorPathTooLong => Len(template) = MAX_SECTIONS
 
 StrictOrderOfRanges ==
    \A n \in DOMAIN template:

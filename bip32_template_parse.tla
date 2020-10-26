@@ -366,7 +366,7 @@ ParserFSM ==
     CASE fsm_state = StateSectionStart
          -> CASE c = "/"
                  -> StateTransition(StateErrorUnexpectedSlash)
-              [] c \in { "[", "*" } /\ Len(template) = MAX_SECTIONS
+              [] c \in { "[", "*" } \union Digits /\ Len(template) = MAX_SECTIONS
                  -> StateTransition(StateErrorPathTooLong)
               [] c = "["
                  -> /\ index_value' = INVALID_INDEX
@@ -380,11 +380,6 @@ ParserFSM ==
                     /\ StateTransition_raw(StateSectionEnd)
                     /\ UNCHANGED <<template, accepted_hardened_markers,
                                    fsm_return_state>>
-              [] c \in Digits /\ Len(template) = MAX_SECTIONS
-                 -> LET res == ProcessDigit
-                     IN IF res.ok
-                        THEN StateTransition(StateErrorPathTooLong)
-                        ELSE StateTransition(res.error_state)
               [] c \in Digits
                  -> LET res == ProcessDigit
                     IN IF res.ok
@@ -403,10 +398,10 @@ ParserFSM ==
       [] fsm_state = StateNextSection
          -> CASE c = "/"
                  -> StateTransition(StateSectionStart)
-              [] c = NULL_CHAR /\ Len(template) > MAX_SECTIONS
-                 -> StateTransition(StateErrorPathTooLong)
               [] c = NULL_CHAR
-                 -> StateTransition(StateNormalFinish)
+                 -> /\ Assert(Len(template) <= MAX_SECTIONS,
+                              "This is checked in SECTION_START or SECTION_END")
+                    /\ StateTransition(StateNormalFinish)
               [] OTHER -> StateTransition(UnexpectedCharState)
 
       [] fsm_state = StateRangeWithinSection

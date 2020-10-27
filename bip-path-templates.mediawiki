@@ -167,7 +167,7 @@ While the formal specification specifies an FSM, which would be convenient for i
 
 A FSM-based approach can be made close to the formal specification, though, and the test data generated with TLC checker would give much better coverage for a FSM based implementation. If the template string contains several errors, an implementation that uses deconstruction apporach might detect some of these errors earlier than FSM-based implementation, and vise versa.
 
-At the moment, two implementations exist:
+At the moment, three implementations exist:
 
 * FSM implementation in C: https://github.com/dgpv/bip32_template_c_implementation
 * FSM implementation in Python (micropython compatible): https://github.com/dgpv/bip32_template_python_implementation

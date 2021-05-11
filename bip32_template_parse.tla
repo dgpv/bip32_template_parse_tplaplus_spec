@@ -148,7 +148,7 @@ HardenedMarkers == IF TEMPLATE_FORMAT_UNAMBIGOUS
                    THEN { "h" }
                    ELSE { "'", "h" }
 
-ValidChars == { "m", "/", "[", "]", "-", ",", "*" }
+ValidChars == { "m", "/", "{", "}", "-", ",", "*" }
               \union HardenedMarkers
               \union Digits
 
@@ -366,9 +366,9 @@ ParserFSM ==
     CASE fsm_state = StateSectionStart
          -> CASE c = "/"
                  -> StateTransition(StateErrorUnexpectedSlash)
-              [] c \in { "[", "*" } \union Digits /\ Len(template) = MAX_SECTIONS
+              [] c \in { "{", "*" } \union Digits /\ Len(template) = MAX_SECTIONS
                  -> StateTransition(StateErrorPathTooLong)
-              [] c = "["
+              [] c = "{"
                  -> /\ index_value' = INVALID_INDEX
                     /\ StateTransitionWithReturn_raw(StateParseValue,
                                                      StateRangeWithinSection)
@@ -437,7 +437,7 @@ ParserFSM ==
                                   /\ UNCHANGED <<template,
                                                  accepted_hardened_markers>>
                              ELSE StateTransition(res.error_state)
-              [] c = "]"
+              [] c = "}"
                  -> LET res == CheckRangeCorrectness("range_last")
                      IN IF res.ok
                         THEN StateTransition(StateSectionEnd)

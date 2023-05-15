@@ -1,7 +1,7 @@
 # TLA+ specification for BIP32 path template parser finite state machine
 
 This repository contains the [TLA+](https://lamport.azurewebsites.net/tla/tla.html)
-specification of the parser for BIP32 path templates described in [bip-path-templates.mediawiki](bip-path-templates.mediawiki)
+specification of the parser for BIP32 path templates described in [BIP-88](https://github.com/bitcoin/bips/blob/master/bip-0088.mediawiki)
 
 The specification can be found in `bip32_template_parse.tla`
 
